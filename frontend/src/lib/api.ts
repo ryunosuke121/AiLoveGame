@@ -1,5 +1,8 @@
 import axios from "axios";
 import { ChatCompletionRequestMessage } from "openai";
+import { useState } from "react";
+import { Stream } from "stream";
+import { transform } from "typescript";
 
 const api = axios.create({
     baseURL: "http://localhost:8070",
@@ -16,14 +19,36 @@ export const getImage = async (prompt: string) => {
 }
 
 //messagesをchatGPTの返答を返す
-export const getChatMessage = async (messages: ChatCompletionRequestMessage[]) => {
-    const stream = await axios({
-        method: 'post',
-        url: 'http://localhost:8070/message',
-        data: messages,
-        responseType: 'stream'
-    })
+export const useChat = async (messages: ChatCompletionRequestMessage[]) => {
+    const [responseText, setResponseText] = useState('');
 
-    // const stream = await api.post('/message', messages);
-    return stream;
+    try {
+        const response = await axios({
+            method: 'post',
+            url: 'http://localhost:8070/message',
+            data: messages,
+            responseType: 'stream'
+        })
+
+        const streamReader = new Stream.Transform({
+            transform(chunk, encoding, callback) {
+                const decodedChunk = chunk.toString();
+                this.push(decodedChunk);
+                callback();
+            }
+        })
+
+        response.data.pipe(streamReader);
+
+        streamReader.on('data', (chunk) => {
+            setResponseText((prev) => (prev + chunk.toString('utf-8')));
+        })
+
+        streamReader.on('end', () => {
+            console.log('ストリームの終了');
+        });
+    } catch (error) {
+        console.log(error);
+    }
+    return responseText;
 }
