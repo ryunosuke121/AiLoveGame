@@ -10,15 +10,23 @@ import { useState } from "react"
 const inter = Inter({ subsets: ["latin"] })
 
 export default function Home() {
+  //対話画面なのか、幕間画面なのかを判断するstate
   const [isInterMission, setIsInterMission] = useState<boolean>(true)
+  //ゲームが終了したのかを判断するstate
   const [isEnd, setIsEnd] = useState<boolean>(false)
+  //告白の場面なのか、ゲーム画面なのかを判断するstate
   const [isNotConfessionTime, setIsNotConfessionTime] = useState<boolean>(true)
+  //相手の名前に関するstate
+  const [name, setName] = useState("ジェシー")
+  //幕間画面からゲーム画面に戻すための関数
   const clickChangeScreen = () => {
     setIsInterMission(!isInterMission)
   }
+  //ゲームの終了を知らせる関数
   const clickSetEnd = () => {
     setIsEnd(true)
   }
+  //告白タイムなのかを判断するための関数
   const clickSetConfession = () => {
     setIsNotConfessionTime(!isNotConfessionTime)
   }
@@ -30,20 +38,24 @@ export default function Home() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
+      {/* ゲーム画面なのか、告白画面なのかを判断 */}
       {isNotConfessionTime ? (
         <GameLayout situation="/ジェシーの部屋2.jpeg">
           <TalkScreen
             text="疲れちゃった。そこのホテルで休憩しない？"
             clickSetConfession={clickSetConfession}
+            name={name}
           />
         </GameLayout>
       ) : isEnd ? (
+        //告白が終わっているかを判断
         <Confession text="END" />
       ) : isInterMission ? (
+        //対話画面なのか、幕間画面なのかを判断
         <Confession clickChangeScreen={clickChangeScreen} text="♡告白タイム♡" />
       ) : (
         <GameLayout situation="/放課後の教室.jpeg">
-          <TalkScreen clickSetEnd={clickSetEnd} text="ちょっとタバコ吸い行かない？" />
+          <TalkScreen clickSetEnd={clickSetEnd} text="ちょっとタバコ吸い行かない？" name={name} />
         </GameLayout>
       )}
     </>
