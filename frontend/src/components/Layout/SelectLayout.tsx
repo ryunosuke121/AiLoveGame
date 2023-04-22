@@ -1,5 +1,6 @@
 import { ReactElement, useState, useEffect } from "react";
 import Head from "next/head";
+import { useAnswerContext } from '@/components/providers/AnswerContext';
 
 
 type LayoutProps = {
@@ -82,6 +83,7 @@ const Select = ({ children }: LayoutProps) => {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState<number>(0);
   const [selectedAnswers, setSelectedAnswers] = useState<Answer[]>([]);
   const [message, setMessage] = useState(0);
+  const {isCompleted,setIsCompleted} = useAnswerContext();
 
   const handleOptionClick = (option: string) => {
     const genre = questions[currentQuestionIndex].genre; 
@@ -99,6 +101,7 @@ useEffect(() => {
   if (selectedAnswers.length === questions.length) {
     // すべての質問に回答した後の処理
     console.log('回答完了:', selectedAnswers);
+    setIsCompleted(true);
   }
 }, [selectedAnswers]);
 
@@ -108,7 +111,7 @@ const currentQuestion = questions[currentQuestionIndex];
     <>
       <div className = "bg-custom-pink text-custom-pink h-screen w-screen ">
         <div className="text-4xl text-center p-4">
-          理想の女性を作ってみよう！
+          理想の人を作ってみよう！
         </div>
         <div className = "text-xl text-center">
         {message === 0 ? "まずは見た目から！" : "次は性格を決めよう！"}
