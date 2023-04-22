@@ -1,6 +1,7 @@
 import { ReactElement, useState, useEffect } from "react";
 import Head from "next/head";
 import { useAnswerContext } from '@/components/providers/AnswerContext';
+import {getImage} from '@/lib/api'
 
 
 type LayoutProps = {
@@ -82,25 +83,37 @@ const questions: Question[] = [
 const Select = ({ children }: LayoutProps) => {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState<number>(0);
   const [selectedAnswers, setSelectedAnswers] = useState<Answer[]>([]);
-  const [message, setMessage] = useState(0);
+  const [message, setMessage] = useState<number>(0);
+  const [imagePrompt, setImagePrompt] = useState("")
   const {isCompleted,setIsCompleted} = useAnswerContext();
+  
+const handleOptionClick = (option: string) => {
+  const genre = questions[currentQuestionIndex].genre; 
+  setSelectedAnswers([...selectedAnswers, { genre, answer: option }]);
 
-  const handleOptionClick = (option: string) => {
-    const genre = questions[currentQuestionIndex].genre; 
-    setSelectedAnswers([...selectedAnswers, { genre, answer: option }]);
+if (currentQuestionIndex < questions.length - 1) {
+  setCurrentQuestionIndex(currentQuestionIndex + 1);
+} 
 
-  if (currentQuestionIndex < questions.length - 1) {
-    setCurrentQuestionIndex(currentQuestionIndex + 1);
-  } 
-
-  if (currentQuestionIndex > 5) {
-    setMessage(1);
+if (currentQuestionIndex > 5) {
+  setMessage(1);
+} 
+if (currentQuestionIndex > 8) {
+  setMessage(2);
   } 
 };
-useEffect(() => {
+
+  useEffect(() => {
   if (selectedAnswers.length === questions.length) {
-    // すべての質問に回答した後の処理
-    console.log('回答完了:', selectedAnswers);
+    //すべての質問に回答した後の処理
+    const imageString = selectedAnswers
+      .slice(0, 10)
+      .map((item) => `${item.genre}は${item.answer}`)
+      .join("、");
+
+    setImagePrompt(imageString);
+    console.log(imageString);
+    getImage(imageString);
     setIsCompleted(true);
   }
 }, [selectedAnswers]);
@@ -111,10 +124,10 @@ const currentQuestion = questions[currentQuestionIndex];
     <>
       <div className = "bg-custom-pink text-custom-pink h-screen w-screen ">
         <div className="text-4xl text-center p-4">
-          理想の人を作ってみよう！
+          話したい人を作ってみよう！
         </div>
         <div className = "text-xl text-center">
-        {message === 0 ? "まずは見た目から！" : "次は性格を決めよう！"}
+        {message === 0 ? "まずは見た目から！" : message === 1 ? "次は性格を決めよう！" : "シチュエーションを決めよう！"}
         </div>
         <div className = "text-xl text-center">
           どれか一つを選択してね
