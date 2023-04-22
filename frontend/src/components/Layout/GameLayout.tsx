@@ -6,25 +6,29 @@ export const metadata = {
   description: "AI",
 }
 
-type LayoutProps = {
-  readonly children: ReactElement
-}
+const GameLayout = (props: any) => {
+  const { children, situation } = props
 
-const GameLayout = ({ children }: LayoutProps) => {
   return (
     <>
       <Head>
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main>
-        <div className="layout">{children}</div>
+        <div
+          className="layout"
+          style={{
+            backgroundImage: `url(${situation})`,
+          }}
+        >
+          {children}
+        </div>
       </main>
 
       <style jsx>{`
         .layout {
           background-size: cover;
           background-position: center;
-          background-image: url("/放課後の教室.jpeg");
           height: 100vh;
         }
       `}</style>
