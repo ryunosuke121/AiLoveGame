@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, ReactNode } from 'react';
+import { createContext, useContext, useState, ReactNode, SetStateAction, Dispatch } from 'react';
 
 
 interface AnswerContextType {
@@ -6,7 +6,7 @@ interface AnswerContextType {
   setIsCompleted: (value: boolean) => void;
 }
 
-export const AnswerContext = createContext<AnswerContextType | undefined>(undefined);
+export const AnswerContext = createContext<{isCompleted: boolean, setIsCompleted: Dispatch<SetStateAction<boolean>>}>({isCompleted: false, setIsCompleted: () => {}});
 
 export const useAnswerContext = () => {
   const context = useContext(AnswerContext);
