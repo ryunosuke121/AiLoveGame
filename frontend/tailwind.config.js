@@ -9,7 +9,15 @@ module.exports = {
     "./src/**/*.{js,ts,jsx,tsx,mdx}",
   ],
   theme: {
-    extend: {},
+    extend: {
+      backgroundColor: {
+        'custom-pink': '#FFEBF3',
+        'custom-select-pink' : '#FF93A6'
+      },
+      textColor: {
+        'custom-pink': '#FF93A6',
+      },
+    },
   },
   plugins: [],
 }
