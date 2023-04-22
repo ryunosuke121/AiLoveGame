@@ -24,7 +24,7 @@ export default function TalkScreen(props: any) {
             <>
               <p className="text-white text-2xl px-40 pt-4">あなた</p>
               <div className="flex items-center justify-center pb-36 mt-32">
-                <input className="h-10 opacity-60 w-1/3" />
+                <input className="h-10 opacity-60 w-1/3 outline-0" />
                 <button className="text-white border-2 py-2 px-1 ml-5" onClick={completeInput}>
                   話しかける
                 </button>
