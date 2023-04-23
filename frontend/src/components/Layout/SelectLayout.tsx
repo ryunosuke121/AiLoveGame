@@ -124,7 +124,6 @@ const Select = ({ children }: LayoutProps) => {
         const imageUrl = await getImage(imageString);
         setImageUrl(imageUrl);
         console.log(imageUrl);
-        setIsCompleted(true);
       };
       fetchImage();
     } 
