@@ -58,8 +58,8 @@ export default function Home() {
             name={name}
             placeholder="ここに話したいことを記入してください"
             talkButton="話す"
-            imageUrl
-            setImageUrl
+            imageUrl={imageUrl}
+            setImageUrl = {setImageUrl}
           />
         </GameLayout>
       ) : isEnd ? (
@@ -76,8 +76,8 @@ export default function Home() {
             name={name}
             placeholder="さぁ、告白してください!"
             talkButton="告白する"
-            imageUrl
-            setImageUrl 
+            imageUrl={imageUrl}
+            setImageUrl = {setImageUrl}
           />
         </GameLayout>
       )}

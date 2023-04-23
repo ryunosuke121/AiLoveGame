@@ -17,10 +17,10 @@ async def create_img(prompt: str):
     response = openai.Image.create(
         prompt=prompt,
         n=1,
-        size='1024x1024',
+        size='512x512',
     )
     image_url = response['data'][0]['url']
     getImage.download_img(image_url)
     remBg.remove_bg()
-    
+
     return FileResponse('api/public/output.png', media_type="image/png")

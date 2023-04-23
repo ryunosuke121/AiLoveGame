@@ -21,7 +21,7 @@ export default function TalkScreen(props: talkType) {
     <>
       <div>
         <div className="flex justify-between items-end">
-          <img src={imageUrl} alt="ジェシー" />
+          <img src={imageUrl} alt="ジェシー" className="h-[500px]" />
           {clickSetConfession ? (
             <button className="mr-40 mb-5" onClick={clickSetEnd || clickSetConfession}>
               <img
