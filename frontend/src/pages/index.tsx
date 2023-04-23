@@ -21,7 +21,7 @@ export default function Home() {
   const [isInterMission, setIsInterMission] = useState<boolean>(true)
   //入力情報を受け取るstate
   const [selectedAnswers, setSelectedAnswers] = useState<Answer[]>([])
-
+  //選択に応じて場面を変える関数
   const selectSituation = () => {
     if (selectedAnswers[10]) {
       if (selectedAnswers[10].answer === "学校") {
@@ -41,7 +41,7 @@ export default function Home() {
       return "/放課後の教室.jpeg"
     }
   }
-
+  //選んだ状況に応じて背景を変える処理
   const situation = selectSituation()
   //ゲームが終了したのかを判断するstate
   const [isEnd, setIsEnd] = useState<boolean>(false)

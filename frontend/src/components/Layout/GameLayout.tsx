@@ -1,4 +1,4 @@
-import { ReactElement } from "react"
+import { ReactElement, ReactNode } from "react"
 import Head from "next/head"
 
 export const metadata = {
@@ -6,7 +6,12 @@ export const metadata = {
   description: "AI",
 }
 
-const GameLayout = (props: any) => {
+type gameLayout = {
+  children: ReactNode
+  situation: string
+}
+
+const GameLayout = (props: gameLayout) => {
   const { children, situation } = props
 
   return (
