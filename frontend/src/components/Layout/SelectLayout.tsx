@@ -89,46 +89,56 @@ const Select = ({ children }: LayoutProps) => {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState<number>(0);
   const [selectedAnswers, setSelectedAnswers] = useState<Answer[]>([]);
   const [message, setMessage] = useState<number>(0);
-  const [imagePrompt, setImagePrompt] = useState("");
+  const [imagePrompt, setImagePrompt] = useState<string>("");
+  const [imageUrl,setImageUrl] = useState<string>("");
   const {isCompleted,setIsCompleted} = useAnswerContext();
   
-const handleOptionClick = (option: string) => {
-  const genre = questions[currentQuestionIndex].genre; 
-  setSelectedAnswers([...selectedAnswers, { genre, answer: option }]);
+  const handleOptionClick = (option: string) => {
+   const genre = questions[currentQuestionIndex].genre; 
+     setSelectedAnswers([...selectedAnswers, { genre, answer: option }]);
 
-if (currentQuestionIndex < questions.length - 1) {
+    if (currentQuestionIndex < questions.length - 1) {
   setCurrentQuestionIndex(currentQuestionIndex + 1);
-} 
-
-if (currentQuestionIndex > 5) {
-  setMessage(1);
-} 
-if (currentQuestionIndex > 8) {
-  setMessage(2);
-  } 
-  if (currentQuestionIndex > 9) {
-    setMessage(3);
     } 
-};
 
-
+    if (currentQuestionIndex > 5) {
+  setMessage(1);
+    } 
+    if (currentQuestionIndex > 8) {
+      setMessage(2);
+      } 
+   if (currentQuestionIndex > 9) {
+      setMessage(3);
+      } 
+  };
 
   useEffect(() => {
-  if (selectedAnswers.length === questions.length) {
-    //すべての質問に回答した後の処理
-    const imageString = selectedAnswers
-      .slice(0, 10)
-      .map((item) => `${item.genre}は${item.answer}`)
-      .join("、");
+    if (selectedAnswers.length === questions.length -2) {
+      const imageString = selectedAnswers
+        .slice(0, 10)
+        .map((item) => `${item.genre}は${item.answer}`)
+        .join("、");
+      setImagePrompt(imageString);
+      console.log(imageString);
+      const fetchImage = async () => {
+        const imageUrl = await getImage(imageString);
+        setImageUrl(imageUrl);
+        console.log(imageUrl);
+        setIsCompleted(true);
+      };
+      fetchImage();
+    } 
+  }, [selectedAnswers]);
 
-    setImagePrompt(imageString);
-    console.log(imageString);
-    getImage(imageString);
-    setIsCompleted(true);
-  }
-}, [selectedAnswers]);
+    useEffect(() => {
+    if (selectedAnswers.length === questions.length) {
+      setIsCompleted(true);
+    }
+  }, [selectedAnswers]);
 
-const currentQuestion = questions[currentQuestionIndex];
+
+
+  const currentQuestion = questions[currentQuestionIndex];
 
   return (
     <>
