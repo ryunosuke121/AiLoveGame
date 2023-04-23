@@ -1,6 +1,7 @@
 export default function Confession(props: any) {
   const { clickChangeScreen,text } = props
   return (
+    //画面遷移の幕間
     <>
       <div
         className="bg-pink-300 h-screen flex items-center justify-center"

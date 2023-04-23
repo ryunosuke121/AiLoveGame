@@ -15,6 +15,7 @@ const GameLayout = (props: any) => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main>
+        {/*situationに応じて背景が変わる */}
         <div
           className="layout"
           style={{

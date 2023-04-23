@@ -6,14 +6,43 @@ import GameLayout from "@/components/Layout/GameLayout"
 import SelectLayout from "@/components/Layout/SelectLayout"
 import TalkScreen from "@/components/uiGroups/TalkScreen"
 import Confession from "@/components/uiGroups/Confession"
-import { useState, useContext } from "react"
+import { useState, useContext, useEffect } from "react"
 import { AnswerContext } from "@/components/providers/AnswerContext"
 
 const inter = Inter({ subsets: ["latin"] })
 
 export default function Home() {
+  //answerの型定義
+  interface Answer {
+    genre: string
+    answer: string
+  }
   //対話画面なのか、幕間画面なのかを判断するstate
   const [isInterMission, setIsInterMission] = useState<boolean>(true)
+  //入力情報を受け取るstate
+  const [selectedAnswers, setSelectedAnswers] = useState<Answer[]>([])
+
+  const selectSituation = () => {
+    if (selectedAnswers[10]) {
+      if (selectedAnswers[10].answer === "学校") {
+        const selectSituation = "/教室12.jpeg"
+        return selectSituation
+      } else if (selectedAnswers[10].answer === "自宅") {
+        const selectSituation = "/ジェシーの部屋2.jpeg"
+        return selectSituation
+      } else if (selectedAnswers[10].answer === "遊園地") {
+        const selectSituation = "/遊園地.jpeg"
+        return selectSituation
+      } else {
+        const selectSituation = "/放課後の教室.jpeg"
+        return selectSituation
+      }
+    } else {
+      return "/放課後の教室.jpeg"
+    }
+  }
+
+  const situation = selectSituation()
   //ゲームが終了したのかを判断するstate
   const [isEnd, setIsEnd] = useState<boolean>(false)
   //告白の場面なのか、ゲーム画面なのかを判断するstate
@@ -45,11 +74,11 @@ export default function Home() {
       </Head>
 
       {!isCompleted ? (
-        <SelectLayout>
+        <SelectLayout setSelectedAnswers={setSelectedAnswers} selectedAnswers={selectedAnswers}>
           <div></div>
         </SelectLayout>
       ) : isNotConfessionTime ? (
-        <GameLayout situation="/ジェシーの部屋2.jpeg">
+        <GameLayout situation={situation}>
           <TalkScreen
             text="疲れちゃった。そこのホテルで休憩しない？"
             clickSetConfession={clickSetConfession}

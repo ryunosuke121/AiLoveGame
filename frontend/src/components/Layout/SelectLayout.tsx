@@ -3,9 +3,6 @@ import Head from "next/head";
 import { useAnswerContext } from '@/components/providers/AnswerContext';
 
 
-type LayoutProps = {
-  readonly children: ReactElement
-}
 
 interface Question {
   question: string;
@@ -13,10 +10,7 @@ interface Question {
   options: string[];
 }
 
-interface Answer {
-  genre: string;
-  answer: string;
-}
+
 
 const questions: Question[] = [
   {
@@ -79,9 +73,9 @@ const questions: Question[] = [
 
 
 
-const Select = ({ children }: LayoutProps) => {
+const Select = (props:any) => {
+  const {setSelectedAnswers,selectedAnswers}=props
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState<number>(0);
-  const [selectedAnswers, setSelectedAnswers] = useState<Answer[]>([]);
   const [message, setMessage] = useState(0);
   const {isCompleted,setIsCompleted} = useAnswerContext();
 

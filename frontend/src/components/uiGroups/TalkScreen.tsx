@@ -2,7 +2,9 @@ import { useState } from "react"
 
 export default function TalkScreen(props: any) {
   const { clickSetEnd, text, clickSetConfession, name, placeholder, talkButton } = props
+  //入力か応答かを判断するstate
   const [isInput, setIsInput] = useState(true)
+  //入力応答を変更する関数
   const completeInput = () => {
     setIsInput(!isInput)
   }
@@ -11,6 +13,7 @@ export default function TalkScreen(props: any) {
       <div>
         <div className="flex justify-between items-end">
           <img src="ジェシー.png" alt="ジェシー" />
+          {/*告白モードにするか、ゲームを終了するかの判断の条件分岐*/}
           {clickSetConfession ? (
             <button className="mr-40 mb-5" onClick={clickSetEnd || clickSetConfession}>
               <img
@@ -30,6 +33,7 @@ export default function TalkScreen(props: any) {
           )}
         </div>
         <div className="bg-black opacity-80">
+          {/*入力画面か出力画面かの判断の条件分岐 */}
           {isInput ? (
             <>
               <p className="text-white text-2xl px-40 pt-4">あなた</p>
