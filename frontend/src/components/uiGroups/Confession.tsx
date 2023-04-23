@@ -1,5 +1,10 @@
-export default function Confession(props: any) {
-  const { clickChangeScreen,text } = props
+type confession = {
+  text: string
+  clickChangeScreen?: () => void
+}
+
+export default function Confession(props: confession) {
+  const { clickChangeScreen, text } = props
   return (
     //画面遷移の幕間
     <>

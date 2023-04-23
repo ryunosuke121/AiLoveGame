@@ -1,6 +1,14 @@
 import { useState } from "react"
 
-export default function TalkScreen(props: any) {
+type talkType = {
+  text: string
+  name: string
+  placeholder: string
+  talkButton: string
+  clickSetEnd?: () => void
+  clickSetConfession?: () => void
+}
+export default function TalkScreen(props: talkType) {
   const { clickSetEnd, text, clickSetConfession, name, placeholder, talkButton } = props
   //入力か応答かを判断するstate
   const [isInput, setIsInput] = useState(true)
