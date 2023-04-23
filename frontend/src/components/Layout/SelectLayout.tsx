@@ -33,7 +33,7 @@ const questions: Question[] = [
   {
     question: 'Q3 何歳くらい?',
     genre: '年齢',
-    options: ['18', '20', '22', '24' , '26'],
+    options: ['18', '22', '30', '40' , '50' , '60'],
   },
   {
     question: 'Q4 体型は?',
@@ -71,6 +71,11 @@ const questions: Question[] = [
     options: ['積極的で楽観的', '社交的で話好き', '穏やかで静か'],
   },
   {
+    question: 'この人と話す?',
+    genre: '確認',
+    options: ['他の人と話す','話したい！'],
+  },
+  {
     question: 'プレイしたい場面を選択してね',
     genre: '場面',
     options: ['学校', '自宅', '遊園地'],
@@ -84,7 +89,7 @@ const Select = ({ children }: LayoutProps) => {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState<number>(0);
   const [selectedAnswers, setSelectedAnswers] = useState<Answer[]>([]);
   const [message, setMessage] = useState<number>(0);
-  const [imagePrompt, setImagePrompt] = useState("")
+  const [imagePrompt, setImagePrompt] = useState("");
   const {isCompleted,setIsCompleted} = useAnswerContext();
   
 const handleOptionClick = (option: string) => {
@@ -101,7 +106,12 @@ if (currentQuestionIndex > 5) {
 if (currentQuestionIndex > 8) {
   setMessage(2);
   } 
+  if (currentQuestionIndex > 9) {
+    setMessage(3);
+    } 
 };
+
+
 
   useEffect(() => {
   if (selectedAnswers.length === questions.length) {
@@ -127,14 +137,16 @@ const currentQuestion = questions[currentQuestionIndex];
           話したい人を作ってみよう！
         </div>
         <div className = "text-xl text-center">
-        {message === 0 ? "まずは見た目から！" : message === 1 ? "次は性格を決めよう！" : "シチュエーションを決めよう！"}
+        {message === 0 ? "まずは見た目から！" : message === 1 || message ===2 ? "次は性格を決めよう！" :  "シチュエーションを決めよう！"}
         </div>
         <div className = "text-xl text-center">
           どれか一つを選択してね
         </div>
-      <div className = "text-xl p-6" >
-        {currentQuestion.question}
-      </div>
+        <div className = "text-xl p-6" >
+          {currentQuestion.question}
+        </div>
+      {message === 0 || message === 1 ? (
+        <>
       <ul className="grid grid-cols-2 gap-4 text-white text-center p-6">
         {currentQuestion.options.map((option, index) => (
           <li key={index} 
@@ -143,7 +155,39 @@ const currentQuestion = questions[currentQuestionIndex];
             {option}
           </li>
         ))}
+      </ul></>) : message === 2 ? (<>
+      <div className = "flex justify-center items-center">
+        <img src="/ジェシー.png" className="h-96" alt = ""/>
+      </div>
+      <div>
+      <ul className="grid grid-cols-2 gap-4 text-white text-center p-6">
+      <li
+      onClick={() => window.location.reload()}
+      className={"bg-custom-select-pink p-4 rounded-2xl hover:animate-bounce"}
+    >
+      {currentQuestion.options[0]}
+    </li>
+    <li
+      onClick={() => handleOptionClick(currentQuestion.options[1])}
+      className={"bg-custom-select-pink p-4 rounded-2xl hover:animate-bounce"}
+    >
+      {currentQuestion.options[1]}
+    </li>
       </ul>
+      </div>
+      </>) : (
+        <div>
+          <ul className="grid grid-cols-2 gap-4 text-white text-center p-6">
+        {currentQuestion.options.map((option, index) => (
+          <li key={index} 
+              onClick={() => handleOptionClick(option)}
+              className={"bg-custom-select-pink p-4 rounded-2xl hover:animate-bounce"}>
+            {option}
+          </li>
+        ))}
+      </ul>
+        </div>
+      )}
     </div>
     </>
   )
