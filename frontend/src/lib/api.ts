@@ -19,7 +19,9 @@ export const getImage = async (prompt: string) => {
 
     });
     console.log(response);
-    const imageUrl = URL.createObjectURL(response.data);
+    const blob =new Blob([response.data], {type: 'image/png'})
+    const imageUrl = URL.createObjectURL(blob);
+    console.log(imageUrl);
     return imageUrl;
 }
 
