@@ -13,11 +13,20 @@ type talkType = {
   talkButton: string
   clickSetEnd?: () => void
   clickSetConfession?: () => void
+  imageUrl: string
+  setImageUrl: Dispatch<SetStateAction<string>>
+  selectedAnswers: any
+  setSelectedAnswers: Dispatch<SetStateAction<any>>
 }
 const type =
   "性別は女性、国は北米、年齢は22、体型は標準、髪型はショート、髪色は茶髪、タイプは可愛い系、性格は内向的、タイプはデレデレ、詳細性格は社交的で話好き"
 export default function TalkScreen(props: talkType) {
-  const { clickSetEnd, text, clickSetConfession, name, placeholder, talkButton, setText } = props
+  const { clickSetEnd, text, clickSetConfession, name, placeholder, talkButton, setText, imageUrl, setImageUrl, selectedAnswers, setSelectedAnswers } = props
+  const imageString = selectedAnswers
+        .slice(0, 10)
+        .map((item: any) => `${item.genre}は${item.answer}`)
+        .join("、");
+  console.log(imageString);
   //入力か応答かを判断するstate
   const [isInput, setIsInput] = useState(true)
   const [inputValue, setInputValue] = useState("")
@@ -27,7 +36,7 @@ export default function TalkScreen(props: talkType) {
   }
   //gptに送るデータの管理
   const [messages, setMessages] = useState<ChatCompletionRequestMessage[]>([
-    { role: "system", content: type },
+    { role: "system", content: 'あなたは'+ imageString +'な人として振る舞ってください'},
   ])
 
   const addMessages = (message: ChatCompletionRequestMessage) => {
@@ -36,44 +45,66 @@ export default function TalkScreen(props: talkType) {
 
   //入力応答を変更する関数
   const completeInput = async () => {
-    addMessages({ role: "user", content: inputValue })
+    await addMessages({ role: "user", content: inputValue })
+    //setText('');
     setIsInput(!isInput)
-    try {
-      const response = await axios({
-        method: "post",
-        url: "http://localhost:8070/message",
-        data: messages,
-        responseType: "stream",
-      })
 
-      const streamReader = new Stream.Transform({
-        transform(chunk, encoding, callback) {
-          const decodedChunk = chunk.toString()
-          this.push(decodedChunk)
-          callback()
-        },
-      })
+    const response = await axios({
+          method: "post",
+          url: "http://localhost:8070/message",
+          data: [...messages,{ role: "user", content: inputValue } ],
+    })
 
-      response.data.pipe(streamReader)
+    console.log(response.data);
+    addMessages(response.data.data);
+    setText(response.data.data.content)
+    setInputValue('');
+    console.log(messages);
+    
+    // try {
+    //   const response = await axios({
+    //     method: "post",
+    //     url: "http://localhost:8070/message",
+    //     data: messages,
+    //     responseType: "stream",
+    //   })
 
-      streamReader.on("data", (chunk) => {
-        setText((prev) => prev + chunk.toString("utf-8"))
-      })
+    //   const streamReader = new Stream.Transform({
+    //     transform(chunk, encoding, callback) {
+    //       const decodedChunk = chunk.toString()
+    //       this.push(decodedChunk)
+    //       callback()
+    //     },
+    //   })
 
-      streamReader.on("end", () => {
-        console.log("ストリームの終了")
-        addMessages({ role: "assistant", content: text })
-      })
-    } catch (error) {
-      console.log(error)
-    }
+    //   response.data.pipe(streamReader)
+
+    //   streamReader.on("data", (chunk) => {
+    //     console.log(chunk);
+    //     setText((prev) => prev + chunk.toString("utf-8"))
+    //   })
+
+    //   streamReader.on("end", () => {
+    //     console.log("ストリームの終了")
+    //     addMessages({ role: "assistant", content: text })
+    //   })
+    // } catch (error) {
+    //   console.log(error)
+    // }
+  }
+
+  const completeOutput = () => {
+    console.log(messages);
+    setText('');
+    setIsInput(!isInput)
+    setInputValue('');
   }
 
   return (
     <>
       <div>
         <div className="flex justify-between items-end">
-          <img src="ジェシー.png" alt="ジェシー" />
+          <img src={imageUrl} alt="ジェシー" className="h-[400px]" />
           {/*告白モードにするか、ゲームを終了するかの判断の条件分岐*/}
           {clickSetConfession ? (
             <button className="mr-40 mb-5" onClick={clickSetEnd || clickSetConfession}>
@@ -115,7 +146,7 @@ export default function TalkScreen(props: talkType) {
               <p className="text-white text-2xl px-40 pt-4">{name}</p>
               <div className="flex pb-36 pt-32 items-center justify-center">
                 <p className="text-white text-3xl text-center">{text}</p>
-                <div onClick={completeInput} className="text-white text-2xl ml-10">
+                <div onClick={completeOutput} className="text-white text-2xl ml-10">
                   ▶︎
                 </div>
               </div>

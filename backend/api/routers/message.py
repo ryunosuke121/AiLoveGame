@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 from api.schemas import message
-from fastapi.responses import StreamingResponse
+from fastapi.responses import JSONResponse
 import os
 import openai
 from dotenv import load_dotenv
@@ -19,12 +19,12 @@ async def post_message(
         messages=[
             {'role': m.role, 'content': m.content} for m in messageBody
         ],
-        stream=True
+        #stream=True
     )
-    def generate_stream_response():
-        for res in response:
-            if 'content' in res['choices'][0]['delta']:
-                text = res['choices'][0]['delta']['content']
-                print(text)
-                yield text
-    return StreamingResponse(generate_stream_response(), media_type="text/plain")
+    # def generate_stream_response():
+    #     for res in response:
+    #         if 'content' in res['choices'][0]['delta']:
+    #             text = res['choices'][0]['delta']['content']
+    #             print(text)
+    #             yield text
+    return JSONResponse({'data': response['choices'][0]['message']}, status_code=200)

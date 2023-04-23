@@ -14,8 +14,14 @@ export const getImage = async (prompt: string) => {
         params: {
             prompt,
         },
+        responseType: 'arraybuffer',
+        timeout: 60000,
     });
-    return response.data;
+    console.log(response);
+    const blob =new Blob([response.data], {type: 'image/png'})
+    const imageUrl = URL.createObjectURL(blob);
+    console.log(imageUrl);
+    return imageUrl;
 }
 
 //messagesをchatGPTの返答を返す

@@ -60,6 +60,7 @@ export default function Home() {
   const clickSetEnd = () => {
     setIsEnd(true)
   }
+  const [imageUrl, setImageUrl] = useState<string>("")
   //告白タイムなのかを判断するための関数
   const clickSetConfession = () => {
     setIsNotConfessionTime(!isNotConfessionTime)
@@ -77,7 +78,7 @@ export default function Home() {
       </Head>
 
       {!isCompleted ? (
-        <SelectLayout setSelectedAnswers={setSelectedAnswers} selectedAnswers={selectedAnswers}>
+        <SelectLayout setSelectedAnswers={setSelectedAnswers} selectedAnswers={selectedAnswers} imageUrl={imageUrl} setImageUrl = {setImageUrl}>
           <div></div>
         </SelectLayout>
       ) : isNotConfessionTime ? (
@@ -89,6 +90,10 @@ export default function Home() {
             name={name}
             placeholder="ここに話したいことを記入してください"
             talkButton="話す"
+            imageUrl={imageUrl}
+            setImageUrl={setImageUrl}
+            selectedAnswers={selectedAnswers}
+            setSelectedAnswers={setSelectedAnswers}
           />
         </GameLayout>
       ) : isEnd ? (
@@ -101,11 +106,15 @@ export default function Home() {
         <GameLayout situation="/放課後の教室.jpeg">
           <TalkScreen
             clickSetEnd={clickSetEnd}
-            text={messages}
+            text='私はAIなので付き合えません。ごめんなさい。'
             setText={setMessages}
             name={name}
             placeholder="さぁ、告白してください!"
             talkButton="告白する"
+            imageUrl={imageUrl}
+            setImageUrl={setImageUrl}
+            selectedAnswers={selectedAnswers}
+            setSelectedAnswers={setSelectedAnswers}
           />
         </GameLayout>
       )}
