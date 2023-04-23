@@ -6,6 +6,7 @@ import { transform } from "typescript";
 
 const api = axios.create({
     baseURL: "http://localhost:8070",
+    withCredentials: true,
 })
 
 //promptを送ると画像urlを返す
@@ -14,8 +15,12 @@ export const getImage = async (prompt: string) => {
         params: {
             prompt,
         },
+        timeout: 300000,
+
     });
-    return response.data;
+    console.log(response);
+    const imageUrl = URL.createObjectURL(response.data);
+    return imageUrl;
 }
 
 //messagesをchatGPTの返答を返す

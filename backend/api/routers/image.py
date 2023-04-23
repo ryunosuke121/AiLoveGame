@@ -1,9 +1,10 @@
 from fastapi import APIRouter
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, JSONResponse
 import os
 import openai
 from dotenv import load_dotenv
 from api.util import getImage, remBg
+import base64
 
 load_dotenv()
 
@@ -21,4 +22,5 @@ async def create_img(prompt: str):
     image_url = response['data'][0]['url']
     getImage.download_img(image_url)
     remBg.remove_bg()
-    return FileResponse('api/public/output.png', media_type='image/png')
+    
+    return FileResponse('api/public/output.png', media_type="image/png")
