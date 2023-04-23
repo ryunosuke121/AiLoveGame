@@ -8,6 +8,7 @@ import TalkScreen from "@/components/uiGroups/TalkScreen"
 import Confession from "@/components/uiGroups/Confession"
 import { useState, useContext, useEffect } from "react"
 import { AnswerContext } from "@/components/providers/AnswerContext"
+import { useChat } from "@/lib/api"
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -17,6 +18,8 @@ export default function Home() {
     genre: string
     answer: string
   }
+  //AIのメッセージを格納するstate
+  const [messages, setMessages] = useState("")
   //対話画面なのか、幕間画面なのかを判断するstate
   const [isInterMission, setIsInterMission] = useState<boolean>(true)
   //入力情報を受け取るstate
@@ -80,7 +83,8 @@ export default function Home() {
       ) : isNotConfessionTime ? (
         <GameLayout situation={situation}>
           <TalkScreen
-            text="疲れちゃった。そこのホテルで休憩しない？"
+            text={messages}
+            setText={setMessages}
             clickSetConfession={clickSetConfession}
             name={name}
             placeholder="ここに話したいことを記入してください"
@@ -97,7 +101,8 @@ export default function Home() {
         <GameLayout situation="/放課後の教室.jpeg">
           <TalkScreen
             clickSetEnd={clickSetEnd}
-            text="ちょっとタバコ吸い行かない？"
+            text={messages}
+            setText={setMessages}
             name={name}
             placeholder="さぁ、告白してください!"
             talkButton="告白する"
