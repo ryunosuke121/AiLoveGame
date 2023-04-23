@@ -15,7 +15,8 @@ export const getImage = async (prompt: string) => {
         params: {
             prompt,
         },
-        timeout: 300000,
+        responseType: 'arraybuffer',
+        timeout: 30000,
 
     });
     console.log(response);

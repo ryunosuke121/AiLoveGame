@@ -1,11 +1,13 @@
-import { ReactElement, useState, useEffect } from "react";
+import { ReactElement, useState, useEffect, SetStateAction, Dispatch } from "react";
 import Head from "next/head";
 import { useAnswerContext } from '@/components/providers/AnswerContext';
-import {getImage} from '@/lib/api'
+import { getImage } from '@/lib/api'
 
 
 type LayoutProps = {
   readonly children: ReactElement
+  imageUrl: string,
+  setImageUrl: Dispatch<SetStateAction<string>>
 }
 
 interface Question {
@@ -33,7 +35,7 @@ const questions: Question[] = [
   {
     question: 'Q3 何歳くらい?',
     genre: '年齢',
-    options: ['18', '22', '30', '40' , '50' , '60'],
+    options: ['18', '22', '30', '40', '50', '60'],
   },
   {
     question: 'Q4 体型は?',
@@ -43,7 +45,7 @@ const questions: Question[] = [
   {
     question: 'Q5 髪型は?',
     genre: '髪型',
-    options: ['ベリーショート', 'ショート', 'ミディアム', 'ロング' , 'ベリーロング'],
+    options: ['ベリーショート', 'ショート', 'ミディアム', 'ロング', 'ベリーロング'],
   },
   {
     question: 'Q6 髪色は?',
@@ -53,12 +55,12 @@ const questions: Question[] = [
   {
     question: 'Q7 どんなタイプの子?',
     genre: 'タイプ',
-    options: ['清楚系', '可愛い系', 'かっこいい系', '綺麗系' , 'ストリート系'],
+    options: ['清楚系', '可愛い系', 'かっこいい系', '綺麗系', 'ストリート系'],
   },
   {
     question: 'Q8 大まかな性格は?',
     genre: '性格',
-    options: ['外向的', '内向的', '積極的', '消極的',  ],
+    options: ['外向的', '内向的', '積極的', '消極的',],
   },
   {
     question: 'Q9 性格は?',
@@ -73,7 +75,7 @@ const questions: Question[] = [
   {
     question: 'この人と話す?',
     genre: '確認',
-    options: ['他の人と話す','話したい！'],
+    options: ['他の人と話す', '話したい！'],
   },
   {
     question: 'プレイしたい場面を選択してね',
@@ -85,51 +87,48 @@ const questions: Question[] = [
 
 
 
-const Select = ({ children }: LayoutProps) => {
+const Select = ({ children, imageUrl, setImageUrl }: LayoutProps) => {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState<number>(0);
   const [selectedAnswers, setSelectedAnswers] = useState<Answer[]>([]);
   const [message, setMessage] = useState<number>(0);
   const [imagePrompt, setImagePrompt] = useState<string>("");
-  const [imageUrl,setImageUrl] = useState<string>("");
-  const {isCompleted,setIsCompleted} = useAnswerContext();
-  
+  const { isCompleted, setIsCompleted } = useAnswerContext();
+
   const handleOptionClick = (option: string) => {
-   const genre = questions[currentQuestionIndex].genre; 
-     setSelectedAnswers([...selectedAnswers, { genre, answer: option }]);
+    const genre = questions[currentQuestionIndex].genre;
+    setSelectedAnswers([...selectedAnswers, { genre, answer: option }]);
 
     if (currentQuestionIndex < questions.length - 1) {
-  setCurrentQuestionIndex(currentQuestionIndex + 1);
-    } 
+      setCurrentQuestionIndex(currentQuestionIndex + 1);
+    }
 
     if (currentQuestionIndex > 5) {
-  setMessage(1);
-    } 
+      setMessage(1);
+    }
     if (currentQuestionIndex > 8) {
       setMessage(2);
-      } 
-   if (currentQuestionIndex > 9) {
+    }
+    if (currentQuestionIndex > 9) {
       setMessage(3);
-      } 
+    }
   };
-
+  
   useEffect(() => {
-    if (selectedAnswers.length === questions.length -2) {
+    if (selectedAnswers.length === questions.length - 2 && message ===2) {
       const imageString = selectedAnswers
         .slice(0, 10)
         .map((item) => `${item.genre}は${item.answer}`)
         .join("、");
       setImagePrompt(imageString);
       console.log(imageString);
-      const fetchImage = async () => {
-        const imageUrl = await getImage(imageString);
-        setImageUrl(imageUrl);
-        console.log(imageUrl);
-      };
-      fetchImage();
-    } 
+      getImage(imageString).then((url) => {
+        setImageUrl(url);
+        console.log(url);
+      });
+    }
   }, [selectedAnswers]);
 
-    useEffect(() => {
+  useEffect(() => {
     if (selectedAnswers.length === questions.length) {
       setIsCompleted(true);
     }
@@ -141,63 +140,63 @@ const Select = ({ children }: LayoutProps) => {
 
   return (
     <>
-      <div className = "bg-custom-pink text-custom-pink h-screen w-screen ">
+      <div className="bg-custom-pink text-custom-pink h-screen w-screen ">
         <div className="text-4xl text-center p-4">
           話したい人を作ってみよう！
         </div>
-        <div className = "text-xl text-center">
-        {message === 0 ? "まずは見た目から！" : message === 1 || message ===2 ? "次は性格を決めよう！" :  "シチュエーションを決めよう！"}
+        <div className="text-xl text-center">
+          {message === 0 ? "まずは見た目から！" : message === 1 || message === 2 ? "次は性格を決めよう！" : "シチュエーションを決めよう！"}
         </div>
-        <div className = "text-xl text-center">
+        <div className="text-xl text-center">
           どれか一つを選択してね
         </div>
-        <div className = "text-xl p-6" >
+        <div className="text-xl p-6" >
           {currentQuestion.question}
         </div>
-      {message === 0 || message === 1 ? (
-        <>
-      <ul className="grid grid-cols-2 gap-4 text-white text-center p-6">
-        {currentQuestion.options.map((option, index) => (
-          <li key={index} 
-              onClick={() => handleOptionClick(option)}
-              className={"bg-custom-select-pink p-4 rounded-2xl hover:animate-bounce"}>
-            {option}
-          </li>
-        ))}
-      </ul></>) : message === 2 ? (<>
-      <div className = "flex justify-center items-center">
-        <img src="/ジェシー.png" className="h-96" alt = ""/>
+        {message === 0 || message === 1 ? (
+          <>
+            <ul className="grid grid-cols-2 gap-4 text-white text-center p-6">
+              {currentQuestion.options.map((option, index) => (
+                <li key={index}
+                  onClick={() => handleOptionClick(option)}
+                  className={"bg-custom-select-pink p-4 rounded-2xl hover:animate-bounce"}>
+                  {option}
+                </li>
+              ))}
+            </ul></>) : message === 2 ? (<>
+              <div className="flex justify-center items-center">
+                <img src={imageUrl} className="h-96" alt="" />
+              </div>
+              <div>
+                <ul className="grid grid-cols-2 gap-4 text-white text-center p-6">
+                  <li
+                    onClick={() => window.location.reload()}
+                    className={"bg-custom-select-pink p-4 rounded-2xl hover:animate-bounce"}
+                  >
+                    {currentQuestion.options[0]}
+                  </li>
+                  <li
+                    onClick={() => handleOptionClick(currentQuestion.options[1])}
+                    className={"bg-custom-select-pink p-4 rounded-2xl hover:animate-bounce"}
+                  >
+                    {currentQuestion.options[1]}
+                  </li>
+                </ul>
+              </div>
+            </>) : (
+          <div>
+            <ul className="grid grid-cols-2 gap-4 text-white text-center p-6">
+              {currentQuestion.options.map((option, index) => (
+                <li key={index}
+                  onClick={() => handleOptionClick(option)}
+                  className={"bg-custom-select-pink p-4 rounded-2xl hover:animate-bounce"}>
+                  {option}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
       </div>
-      <div>
-      <ul className="grid grid-cols-2 gap-4 text-white text-center p-6">
-      <li
-      onClick={() => window.location.reload()}
-      className={"bg-custom-select-pink p-4 rounded-2xl hover:animate-bounce"}
-    >
-      {currentQuestion.options[0]}
-    </li>
-    <li
-      onClick={() => handleOptionClick(currentQuestion.options[1])}
-      className={"bg-custom-select-pink p-4 rounded-2xl hover:animate-bounce"}
-    >
-      {currentQuestion.options[1]}
-    </li>
-      </ul>
-      </div>
-      </>) : (
-        <div>
-          <ul className="grid grid-cols-2 gap-4 text-white text-center p-6">
-        {currentQuestion.options.map((option, index) => (
-          <li key={index} 
-              onClick={() => handleOptionClick(option)}
-              className={"bg-custom-select-pink p-4 rounded-2xl hover:animate-bounce"}>
-            {option}
-          </li>
-        ))}
-      </ul>
-        </div>
-      )}
-    </div>
     </>
   )
 }

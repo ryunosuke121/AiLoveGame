@@ -7,7 +7,7 @@ export const metadata = {
 }
 
 const GameLayout = (props: any) => {
-  const { children, situation } = props
+  const { children, situation} = props
 
   return (
     <>

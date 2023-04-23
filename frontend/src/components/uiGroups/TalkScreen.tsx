@@ -1,16 +1,27 @@
-import { useState } from "react"
+import { Dispatch, SetStateAction, useState } from "react"
 
-export default function TalkScreen(props: any) {
-  const { clickSetEnd, text, clickSetConfession, name, placeholder, talkButton } = props
-  const [isInput, setIsInput] = useState(true)
+type talkType = {
+  text: string
+  name: string
+  placeholder: string
+  talkButton: string
+  clickSetEnd?: () => void
+  clickSetConfession?: () => void
+  imageUrl: string,
+  setImageUrl: Dispatch<SetStateAction<string>>
+}
+export default function TalkScreen(props: talkType) {
+  const { clickSetEnd, text, clickSetConfession, name, placeholder, talkButton, imageUrl, setImageUrl } = props;
+  const [isInput, setIsInput] = useState(true);
   const completeInput = () => {
     setIsInput(!isInput)
-  }
+  };
+  console.log(imageUrl);
   return (
     <>
       <div>
         <div className="flex justify-between items-end">
-          <img src="ジェシー.png" alt="ジェシー" />
+          <img src={imageUrl} alt="ジェシー" />
           {clickSetConfession ? (
             <button className="mr-40 mb-5" onClick={clickSetEnd || clickSetConfession}>
               <img

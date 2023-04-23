@@ -32,6 +32,8 @@ export default function Home() {
   const clickSetConfession = () => {
     setIsNotConfessionTime(!isNotConfessionTime)
   }
+  //女の子の画像を表示するためのstate
+  const [imageUrl, setImageUrl] = useState<string>("");
 
   const { isCompleted, setIsCompleted } = useContext(AnswerContext)
   console.log(isCompleted)
@@ -45,7 +47,7 @@ export default function Home() {
       </Head>
 
       {!isCompleted ? (
-        <SelectLayout>
+        <SelectLayout imageUrl = {imageUrl} setImageUrl={setImageUrl}>
           <div></div>
         </SelectLayout>
       ) : isNotConfessionTime ? (
@@ -56,6 +58,8 @@ export default function Home() {
             name={name}
             placeholder="ここに話したいことを記入してください"
             talkButton="話す"
+            imageUrl
+            setImageUrl
           />
         </GameLayout>
       ) : isEnd ? (
@@ -65,13 +69,15 @@ export default function Home() {
         //対話画面なのか、幕間画面なのかを判断
         <Confession clickChangeScreen={clickChangeScreen} text="♡告白タイム♡" />
       ) : (
-        <GameLayout situation="/放課後の教室.jpeg">
+        <GameLayout situation="/放課後の教室.jpeg" imageUrl = {imageUrl} setImageUrl={setImageUrl}>
           <TalkScreen
             clickSetEnd={clickSetEnd}
             text="ちょっとタバコ吸い行かない？"
             name={name}
             placeholder="さぁ、告白してください!"
             talkButton="告白する"
+            imageUrl
+            setImageUrl 
           />
         </GameLayout>
       )}
