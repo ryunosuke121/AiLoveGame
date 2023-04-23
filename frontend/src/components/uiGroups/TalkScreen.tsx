@@ -1,21 +1,74 @@
-import { useState } from "react"
+import { useChat } from "@/lib/api"
+import { ChatCompletionRequestMessage, ChatCompletionRequestMessageRoleEnum } from "openai"
+import { Dispatch, SetStateAction, useState } from "react"
+import axios from "axios"
+import { Stream } from "stream"
+import { transform } from "typescript"
 
 type talkType = {
   text: string
+  setText: Dispatch<SetStateAction<string>>
   name: string
   placeholder: string
   talkButton: string
   clickSetEnd?: () => void
   clickSetConfession?: () => void
 }
+const type =
+  "性別は女性、国は北米、年齢は22、体型は標準、髪型はショート、髪色は茶髪、タイプは可愛い系、性格は内向的、タイプはデレデレ、詳細性格は社交的で話好き"
 export default function TalkScreen(props: talkType) {
-  const { clickSetEnd, text, clickSetConfession, name, placeholder, talkButton } = props
+  const { clickSetEnd, text, clickSetConfession, name, placeholder, talkButton, setText } = props
   //入力か応答かを判断するstate
   const [isInput, setIsInput] = useState(true)
-  //入力応答を変更する関数
-  const completeInput = () => {
-    setIsInput(!isInput)
+  const [inputValue, setInputValue] = useState("")
+  //入力に応じて値を変える関数
+  const handleInputChabge = (e: any) => {
+    setInputValue(e.target.value)
   }
+  //gptに送るデータの管理
+  const [messages, setMessages] = useState<ChatCompletionRequestMessage[]>([
+    { role: "system", content: type },
+  ])
+
+  const addMessages = (message: ChatCompletionRequestMessage) => {
+    setMessages((prev) => [...prev, message])
+  }
+
+  //入力応答を変更する関数
+  const completeInput = async () => {
+    addMessages({ role: "user", content: inputValue })
+    setIsInput(!isInput)
+    try {
+      const response = await axios({
+        method: "post",
+        url: "http://localhost:8070/message",
+        data: messages,
+        responseType: "stream",
+      })
+
+      const streamReader = new Stream.Transform({
+        transform(chunk, encoding, callback) {
+          const decodedChunk = chunk.toString()
+          this.push(decodedChunk)
+          callback()
+        },
+      })
+
+      response.data.pipe(streamReader)
+
+      streamReader.on("data", (chunk) => {
+        setText((prev) => prev + chunk.toString("utf-8"))
+      })
+
+      streamReader.on("end", () => {
+        console.log("ストリームの終了")
+        addMessages({ role: "assistant", content: text })
+      })
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
   return (
     <>
       <div>
@@ -50,6 +103,7 @@ export default function TalkScreen(props: talkType) {
                   className="outline-0 px-2 focus:caret-white h-10 w-1/3 bg-black text-white text-2xl"
                   placeholder={placeholder}
                   type="text"
+                  onChange={handleInputChabge}
                 />
                 <button className="text-white border-2 py-2 px-1 ml-5" onClick={completeInput}>
                   {talkButton}
