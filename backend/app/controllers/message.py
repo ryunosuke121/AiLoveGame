@@ -1,5 +1,5 @@
 from fastapi import APIRouter
-from api.schemas import message
+from app.schemas import message
 from fastapi.responses import JSONResponse
 import os
 import openai

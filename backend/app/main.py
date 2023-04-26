@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from api.routers import image, message
+from app.controllers import image, message
 from fastapi.middleware.cors import CORSMiddleware
 app = FastAPI()
 app.include_router(image.router)

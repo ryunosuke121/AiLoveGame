@@ -3,7 +3,7 @@ from fastapi.responses import FileResponse
 import os
 import openai
 from dotenv import load_dotenv
-from api.util import getImage, remBg
+from app.util import getImage, remBg
 
 load_dotenv()
 
