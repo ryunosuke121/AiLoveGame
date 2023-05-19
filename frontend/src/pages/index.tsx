@@ -64,6 +64,7 @@ export default function Home() {
   //告白タイムなのかを判断するための関数
   const clickSetConfession = () => {
     setIsNotConfessionTime(!isNotConfessionTime)
+    setMessages("")
   }
 
   const { isCompleted, setIsCompleted } = useContext(AnswerContext)
@@ -106,7 +107,7 @@ export default function Home() {
         <GameLayout situation="/放課後の教室.jpeg">
           <TalkScreen
             clickSetEnd={clickSetEnd}
-            text='私はAIなので付き合えません。ごめんなさい。'
+            text={messages}
             setText={setMessages}
             name={name}
             placeholder="さぁ、告白してください!"
