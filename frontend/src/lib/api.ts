@@ -5,7 +5,7 @@ import { Stream } from "stream";
 import { transform } from "typescript";
 
 const api = axios.create({
-    baseURL: "http://localhost:8070",
+    baseURL: "https://jinbee-backend-aupxsmfz6q-uc.a.run.app",
 })
 
 //promptを送ると画像urlを返す

@@ -25,5 +25,6 @@ async def create_img(prompt: str):
     remBg.remove_bg()
     # base64でエンコード->文字列に変換
     with open('static/output.png', 'rb') as f:
-        base64EncodedStr = base64.b64encode(f).decode()
+        file_content = f.read()
+        base64EncodedStr = base64.b64encode(file_content).decode()
     return JSONResponse(status_code=200, content={'image': str(base64EncodedStr)})

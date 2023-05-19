@@ -1,6 +1,6 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, WebSocket
 from app.schemas import message
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, StreamingResponse
 import os
 import openai
 from dotenv import load_dotenv
@@ -14,17 +14,28 @@ openai.api_key = os.getenv("OPENAI_API_KEY")
 async def post_message(
     messageBody: list[message.ChatRequest]
     ):
+    print(messageBody)
     response = openai.ChatCompletion.create(
         model="gpt-3.5-turbo",
         messages=[
             {'role': m.role, 'content': m.content} for m in messageBody
         ],
-        #stream=True
+        stream=True
     )
+    print(response)
+    def iterfile():
+        for chunk in response:
+            if chunk:
+                content = chunk['choices'][0]['delta'].get('content')
+                if content:
+                    print(content)
+                    yield content
+
+    return StreamingResponse(iterfile(), media_type="text/plain")
     # def generate_stream_response():
     #     for res in response:
     #         if 'content' in res['choices'][0]['delta']:
     #             text = res['choices'][0]['delta']['content']
     #             print(text)
     #             yield text
-    return JSONResponse({'data': response['choices'][0]['message']}, status_code=200)
+    # return JSONResponse({'data': response['choices'][0]['message']}, status_code=200)

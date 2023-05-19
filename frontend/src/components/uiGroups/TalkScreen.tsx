@@ -23,9 +23,9 @@ type talkType = {
 export default function TalkScreen(props: talkType) {
   const { clickSetEnd, text, clickSetConfession, name, placeholder, talkButton, setText, imageUrl, setImageUrl, selectedAnswers, setSelectedAnswers } = props
   const imageString = selectedAnswers
-        .slice(0, 10)
-        .map((item: any) => `${item.genre}は${item.answer}`)
-        .join("、");
+    .slice(0, 10)
+    .map((item: any) => `${item.genre}は${item.answer}`)
+    .join("、");
   console.log(imageString);
   //入力か応答かを判断するstate
   const [isInput, setIsInput] = useState(true)
@@ -36,7 +36,7 @@ export default function TalkScreen(props: talkType) {
   }
   //gptに送るデータの管理
   const [messages, setMessages] = useState<ChatCompletionRequestMessage[]>([
-    { role: "system", content: 'あなたは'+ imageString +'な人として振る舞ってください'},
+    { role: "system", content: 'あなたは' + imageString + 'な人として振る舞ってください' },
   ])
 
   const addMessages = (message: ChatCompletionRequestMessage) => {
@@ -46,51 +46,34 @@ export default function TalkScreen(props: talkType) {
   //入力応答を変更する関数
   const completeInput = async () => {
     await addMessages({ role: "user", content: inputValue })
-    //setText('');
     setIsInput(!isInput)
 
-    const response = await axios({
-          method: "post",
-          url: "http://localhost:8070/message",
-          data: [...messages,{ role: "user", content: inputValue } ],
-    })
+    const newMessage = [...messages, { role: "user", content: inputValue }]
+    console.log(newMessage)
+    const response = await fetch("https://jinbee-backend-aupxsmfz6q-uc.a.run.app/message", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(newMessage)
+    });
 
-    console.log(response.data);
-    addMessages(response.data.data);
-    setText(response.data.data.content)
-    setInputValue('');
-    console.log(messages);
-    
-    // try {
-    //   const response = await axios({
-    //     method: "post",
-    //     url: "http://localhost:8070/message",
-    //     data: messages,
-    //     responseType: "stream",
-    //   })
+    const data = response.body;
+    if (!data) {
+      return;
+    }
+    const reader = data.getReader();
+    const decoder = new TextDecoder();
+    let done = false;
+    let aiResponse: string = '';
 
-    //   const streamReader = new Stream.Transform({
-    //     transform(chunk, encoding, callback) {
-    //       const decodedChunk = chunk.toString()
-    //       this.push(decodedChunk)
-    //       callback()
-    //     },
-    //   })
-
-    //   response.data.pipe(streamReader)
-
-    //   streamReader.on("data", (chunk) => {
-    //     console.log(chunk);
-    //     setText((prev) => prev + chunk.toString("utf-8"))
-    //   })
-
-    //   streamReader.on("end", () => {
-    //     console.log("ストリームの終了")
-    //     addMessages({ role: "assistant", content: text })
-    //   })
-    // } catch (error) {
-    //   console.log(error)
-    // }
+    while (!done) {
+      const { value, done: doneReading } = await reader.read();
+      done = doneReading;
+      const chunkValue = decoder.decode(value);
+      console.log(chunkValue);
+      setText((prev) => (prev + chunkValue));
+    }
   }
 
   const completeOutput = () => {
