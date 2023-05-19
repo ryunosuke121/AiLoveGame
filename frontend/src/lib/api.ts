@@ -9,18 +9,14 @@ const api = axios.create({
 })
 
 //promptを送ると画像urlを返す
-export const getImage = async (prompt: string) => {
+export const getImageUrl = async (prompt: string) => {
     const response = await api.get('/images', {
         params: {
             prompt,
         },
-        responseType: 'arraybuffer',
         timeout: 60000,
     });
-    console.log(response);
-    const blob =new Blob([response.data], {type: 'image/png'})
-    const imageUrl = URL.createObjectURL(blob);
-    console.log(imageUrl);
+    const imageUrl = `data:image/png;base64,${response.data.image}`
     return imageUrl;
 }
 

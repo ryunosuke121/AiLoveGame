@@ -1,7 +1,9 @@
 import urllib.error
 import urllib.request
+#保存先のパス
+dst_path='static/input.png'
 
-dst_path='api/public/input.png'
+#urlから取得した画像を保存する処理
 def download_img(url):
     try:
         with urllib.request.urlopen(url) as web_file:

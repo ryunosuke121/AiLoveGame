@@ -1,7 +1,7 @@
 import { ReactElement, useState, useEffect, SetStateAction, Dispatch } from "react";
 import Head from "next/head";
 import { useAnswerContext } from '@/components/providers/AnswerContext';
-import { getImage } from '@/lib/api'
+import { getImageUrl } from '@/lib/api'
 type LayoutProps = {
   readonly children: ReactElement
   imageUrl: string,
@@ -110,9 +110,9 @@ const Select = ({ children, imageUrl, setImageUrl, selectedAnswers, setSelectedA
         .join("、");
       setImagePrompt(imageString);
       console.log(imageString);
-      getImage(imageString).then((url) => {
-        setImageUrl(url);
-        console.log(url);
+      getImageUrl(imageString).then((imageUrl) => {
+        setImageUrl(imageUrl);
+        console.log(imageUrl);
       });
     }
   }, [selectedAnswers]);
