@@ -5,6 +5,7 @@ import axios from "axios"
 import { Stream } from "stream"
 import { transform } from "typescript"
 
+//talkScreenの型定義
 type talkType = {
   text: string
   setText: Dispatch<SetStateAction<string>>
@@ -18,8 +19,7 @@ type talkType = {
   selectedAnswers: any
   setSelectedAnswers: Dispatch<SetStateAction<any>>
 }
-const type =
-  "性別は女性、国は北米、年齢は22、体型は標準、髪型はショート、髪色は茶髪、タイプは可愛い系、性格は内向的、タイプはデレデレ、詳細性格は社交的で話好き"
+
 export default function TalkScreen(props: talkType) {
   const { clickSetEnd, text, clickSetConfession, name, placeholder, talkButton, setText, imageUrl, setImageUrl, selectedAnswers, setSelectedAnswers } = props
   const imageString = selectedAnswers
