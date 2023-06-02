@@ -1,4 +1,3 @@
-import { useChat } from "@/lib/api"
 import { ChatCompletionRequestMessage, ChatCompletionRequestMessageRoleEnum } from "openai"
 import { Dispatch, SetStateAction, useState } from "react"
 import axios from "axios"
@@ -18,10 +17,11 @@ type talkType = {
   setImageUrl: Dispatch<SetStateAction<string>>
   selectedAnswers: any
   setSelectedAnswers: Dispatch<SetStateAction<any>>
+  talk_id: number
 }
 
 export default function TalkScreen(props: talkType) {
-  const { clickSetEnd, text, clickSetConfession, name, placeholder, talkButton, setText, imageUrl, setImageUrl, selectedAnswers, setSelectedAnswers } = props
+  const { clickSetEnd, text, clickSetConfession, name, placeholder, talkButton, setText, imageUrl, setImageUrl, selectedAnswers, setSelectedAnswers , talk_id} = props
   const imageString = selectedAnswers
     .slice(0, 10)
     .map((item: any) => `${item.genre}は${item.answer}`)
@@ -55,7 +55,7 @@ export default function TalkScreen(props: talkType) {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(newMessage)
+      body: JSON.stringify({messages: newMessage, talk_id: talk_id})
     });
 
     const data = response.body;

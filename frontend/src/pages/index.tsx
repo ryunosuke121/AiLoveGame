@@ -8,7 +8,7 @@ import TalkScreen from "@/components/uiGroups/TalkScreen"
 import Confession from "@/components/uiGroups/Confession"
 import { useState, useContext, useEffect } from "react"
 import { AnswerContext } from "@/components/providers/AnswerContext"
-import { useChat } from "@/lib/api"
+import { startConversation } from "@/lib/api"
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -52,6 +52,8 @@ export default function Home() {
   const [isNotConfessionTime, setIsNotConfessionTime] = useState<boolean>(true)
   //相手の名前に関するstate
   const [name, setName] = useState("ジェシー")
+  //会話のセッションid
+  const [talk_id, setTalk_id] = useState<number>(0)
   //幕間画面からゲーム画面に戻すための関数
   const clickChangeScreen = () => {
     setIsInterMission(!isInterMission)
@@ -62,8 +64,10 @@ export default function Home() {
   }
   const [imageUrl, setImageUrl] = useState<string>("")
   //告白タイムなのかを判断するための関数
-  const clickSetConfession = () => {
+  const clickSetConfession = async () => {
     setIsNotConfessionTime(!isNotConfessionTime)
+    const talk_id = await startConversation()
+    setTalk_id(talk_id);
     setMessages("")
   }
 
@@ -95,6 +99,7 @@ export default function Home() {
             setImageUrl={setImageUrl}
             selectedAnswers={selectedAnswers}
             setSelectedAnswers={setSelectedAnswers}
+            talk_id={talk_id}
           />
         </GameLayout>
       ) : isEnd ? (
@@ -116,6 +121,7 @@ export default function Home() {
             setImageUrl={setImageUrl}
             selectedAnswers={selectedAnswers}
             setSelectedAnswers={setSelectedAnswers}
+            talk_id={talk_id}
           />
         </GameLayout>
       )}
