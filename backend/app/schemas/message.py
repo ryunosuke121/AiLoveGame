@@ -8,3 +8,7 @@ class ChatRequest(BaseModel):
 
 class ChatResponse(BaseModel):
     message: str = Field(None, example="付き合いましょうか")
+
+class Message(BaseModel):
+    messages: list[ChatRequest] = Field(None, example=[{'role': "user", 'content': "付き合ってください"}])
+    talk_id: int = Field(None, example=1)

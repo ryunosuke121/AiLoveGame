@@ -22,6 +22,7 @@ async def create_img(prompt: str):
         )
     except:
         return JSONResponse(status_code=400, content={'message': '画像を取得できませんでした'})
+    
     image_url = response['data'][0]['url']
     getImage.download_img(image_url)
     remBg.remove_bg()
