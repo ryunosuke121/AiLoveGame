@@ -50,7 +50,7 @@ export default function TalkScreen(props: talkType) {
 
     const newMessage = [...messages, { role: "user", content: inputValue }]
     console.log(newMessage)
-    const response = await fetch("https://jinbee-backend-aupxsmfz6q-uc.a.run.app/message", {
+    const response = await fetch("http://localhost:8070/message", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

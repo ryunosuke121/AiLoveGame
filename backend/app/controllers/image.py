@@ -10,16 +10,18 @@ load_dotenv()
 
 router = APIRouter()
 openai.api_key = os.getenv("OPENAI_API_KEY")
-router = APIRouter()
 
 # promptを元に画像生成し、rembgで背景を透過した画像を返す
 @router.get("/images")
 async def create_img(prompt: str):
-    response = openai.Image.create(
-        prompt=prompt,
-        n=1,
-        size='512x512',
-    )
+    try:
+        response = openai.Image.create(
+            prompt=prompt,
+            n=1,
+            size='512x512',
+        )
+    except:
+        return JSONResponse(status_code=400, content={'message': '画像を取得できませんでした'})
     image_url = response['data'][0]['url']
     getImage.download_img(image_url)
     remBg.remove_bg()
@@ -27,4 +29,4 @@ async def create_img(prompt: str):
     with open('static/output.png', 'rb') as f:
         file_content = f.read()
         base64EncodedStr = base64.b64encode(file_content).decode()
-    return JSONResponse(status_code=200, content={'image': str(base64EncodedStr)})
+    return JSONResponse(status_code=200, content={'message': '画像の取得に成功', 'image': str(base64EncodedStr)})

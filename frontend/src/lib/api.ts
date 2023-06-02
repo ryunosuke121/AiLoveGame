@@ -5,7 +5,7 @@ import { Stream } from "stream";
 import { transform } from "typescript";
 
 const api = axios.create({
-    baseURL: "https://jinbee-backend-aupxsmfz6q-uc.a.run.app",
+    baseURL: "http://localhost:8070",
 })
 
 //promptを送ると画像urlを返す
@@ -16,8 +16,12 @@ export const getImageUrl = async (prompt: string) => {
         },
         timeout: 60000,
     });
-    const imageUrl = `data:image/png;base64,${response.data.image}`
-    return imageUrl;
+    if(response.data.message == "画像の取得に成功") {
+        const imageUrl = `data:image/png;base64,${response.data.image}`
+        return imageUrl;
+    } else {
+        return response.data.message;
+    }
 }
 
 //messagesをchatGPTの返答を返す
