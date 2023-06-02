@@ -1,9 +1,53 @@
 version: '3'
 services:
-  jinbee:
+  web:
+    container_name: jinbee_web
     build: .
     volumes:
       - .dockervenv:/src/.venv
       - .:/src
+    networks:
+      - jinbee_network
+    restart: always
     ports:
-      - 8070:8070  # ホストマシンのポート8000を、docker内のポート8000に接続する
+      - 8070:8010  # ホストマシンのポート8070を、docker内のポート8010に接続する
+    environment:
+      MYSQL_USER: mysqlusername
+      MYSQL_PASSWORD: mysqluserpass
+      MYSQL_ROOT_PASSWORD: mysqlrootpass
+      MYSQL_HOST: db
+      MYSQL_DATABASE: jinbee_db
+      AUTHJWT_SECRET_KEY: secret
+      # このDocker Compose は開発時にしか利用しないので、devとする
+      MODE: local
+      CIPHER_KEY: cq-r9GnFbL9Cz5iMqpwPI8BOWm5Ph6uoXaqA0F5g_Js=
+  db:
+    container_name: jinbee_db
+    platform: linux/x86_64
+    image: mysql:8.0
+    command: >
+      mysqld
+      --default-authentication-plugin=mysql_native_password
+      --character-set-server=utf8mb4
+      --collation-server=utf8mb4_general_ci
+    ports:
+      - "3308:3306"
+    volumes:
+      - jinbee_db_volume:/var/lib/mysql
+    networks:
+      - jinbee_network
+    security_opt:
+      - seccomp:unconfined
+    environment:
+      # MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+      MYSQL_USER:                 mysqlusername
+      MYSQL_PASSWORD:             mysqluserpass
+      MYSQL_ROOT_PASSWORD:        mysqlrootpass
+      MYSQL_DATABASE:             jinbee_db
+  
+networks:
+  jinbee_network:
+    driver: bridge
+volumes:
+  jinbee_db_volume:
+    driver: local

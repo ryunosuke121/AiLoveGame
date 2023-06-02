@@ -4,9 +4,6 @@ ENV PYTHONUNBUFFERED=1
 
 WORKDIR /src
 
-# pipを使ってpoetryをインストール
-RUN pip install poetry
-
 # requirements.txtをコピー
 COPY requirements.txt .
 
@@ -17,4 +14,4 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY . .
 
 # uvicornのサーバーを立ち上げる
-ENTRYPOINT ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8070",  "--reload"]
+ENTRYPOINT ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8010",  "--reload"]

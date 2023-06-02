@@ -111,8 +111,12 @@ const Select = ({ children, imageUrl, setImageUrl, selectedAnswers, setSelectedA
       setImagePrompt(imageString);
       console.log(imageString);
       getImageUrl(imageString).then((imageUrl) => {
-        setImageUrl(imageUrl);
-        console.log(imageUrl);
+        if (imageUrl !== "画像を取得できませんでした"){
+          setImageUrl(imageUrl);
+          console.log(imageUrl);
+        } else {
+          setImageUrl('../../../public/science_hakase_shippai.png')
+        }
       });
     }
   }, [selectedAnswers]);
@@ -143,7 +147,7 @@ const Select = ({ children, imageUrl, setImageUrl, selectedAnswers, setSelectedA
               {currentQuestion.options.map((option, index) => (
                 <li key={index}
                   onClick={() => handleOptionClick(option)}
-                  className={"bg-custom-select-pink p-4 rounded-2xl hover:animate-bounce"}>
+                  className={"bg-custom-select-pink p-4 rounded-2xl hover:animate-pulse"}>
                   {option}
                 </li>
               ))}
@@ -155,13 +159,13 @@ const Select = ({ children, imageUrl, setImageUrl, selectedAnswers, setSelectedA
                 <ul className="grid grid-cols-2 gap-4 text-white text-center p-6">
                   <li
                     onClick={() => window.location.reload()}
-                    className={"bg-custom-select-pink p-4 rounded-2xl hover:animate-bounce"}
+                    className={"bg-custom-select-pink p-4 rounded-2xl hover:animate-pulse"}
                   >
                     {currentQuestion.options[0]}
                   </li>
                   <li
                     onClick={() => handleOptionClick(currentQuestion.options[1])}
-                    className={"bg-custom-select-pink p-4 rounded-2xl hover:animate-bounce"}
+                    className={"bg-custom-select-pink p-4 rounded-2xl hover:animate-pulse"}
                   >
                     {currentQuestion.options[1]}
                   </li>
@@ -173,7 +177,7 @@ const Select = ({ children, imageUrl, setImageUrl, selectedAnswers, setSelectedA
               {currentQuestion.options.map((option, index) => (
                 <li key={index}
                   onClick={() => handleOptionClick(option)}
-                  className={"bg-custom-select-pink p-4 rounded-2xl hover:animate-bounce"}>
+                  className={"bg-custom-select-pink p-4 rounded-2xl hover:animate-pulse"}>
                   {option}
                 </li>
               ))}
